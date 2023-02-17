@@ -18,13 +18,16 @@ from django.urls import path, include
 from rest_framework import routers
 
 from department.views import CourseViewSet
+from payments.views import PaymentViewSet
 
 router = routers.SimpleRouter()
 router.register(r'course', CourseViewSet)
+router.register(r'payments', PaymentViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('department/', include('department.urls')),
     path('department/', include(router.urls)),
+    path('user/', include('user.urls')),
 ]

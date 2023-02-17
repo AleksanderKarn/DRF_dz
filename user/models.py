@@ -12,7 +12,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(verbose_name='Почта', unique=True)
 
-    avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
+    avatar = models.ImageField(upload_to='user/', verbose_name='Аватар', **NULLABLE)
     phone = models.CharField(verbose_name='Номер телефона', max_length=20)
     country = models.CharField(verbose_name='Страна', max_length=50)
 

@@ -19,6 +19,8 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     '''Урок'''
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс', **NULLABLE)
+
     name = models.CharField(max_length=100, verbose_name='Название урока')
     preview = models.ImageField(verbose_name='Картинка', **NULLABLE)
     link = models.URLField(verbose_name='Ссылка на видео')
