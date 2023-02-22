@@ -12,18 +12,20 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = (
             'name',
             'link',
+            'owner',
         )
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    count_lesson = serializers.SerializerMethodField() ## забыл скобочки просидел час....... спс pcharm за автозаполнение
-    lessons = LessonSerializer(source='lesson_set', many=True)
+    count_lesson = serializers.SerializerMethodField()
+    lessons = LessonSerializer(source='lesson_set', many=True, read_only=True)
     class Meta:
         model = Course
         fields = (
             'pk',
             'name',
             'description',
+            'owner',
             'count_lesson',
             'lessons',
 
