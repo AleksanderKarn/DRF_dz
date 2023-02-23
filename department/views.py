@@ -1,11 +1,9 @@
-
 from rest_framework import viewsets, generics
-from rest_framework.generics import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
 
 from department.models import Course, Lesson
-from department.permissions import OwnerOrStuff, IsOwner, IsStaff, PermsForViewSetCourse
+from department.permissions import OwnerOrStuff, IsOwner, IsStaff, PermsForViewSetCourse, IsNotStaff
 from department.serializers import CourseSerializer, LessonSerializer
 
 
@@ -16,13 +14,12 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.request.user.is_staff:
+        if self.request.user.role == 'moderator':
             return queryset
         return queryset.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
 
     ##### CRUD для модели Lesson при помощи generics
 
@@ -30,7 +27,13 @@ class CourseViewSet(viewsets.ModelViewSet):
 class LessonListView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [OwnerOrStuff]
+    permission_classes = [IsAuthenticated | IsStaff]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.role == 'moderator':
+            return queryset
+        return queryset.filter(owner=self.request.user)
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -42,11 +45,10 @@ class LessonCreateAPIView(generics.CreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-
 class LessonDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsOwner]
+    permission_classes = [IsOwner, IsNotStaff]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
