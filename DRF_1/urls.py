@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from department.views import CourseViewSet
+from department.views import CourseViewSet, SubscriptionViewSet
 from payments.views import PaymentViewSet
 
 router = routers.SimpleRouter()
 router.register(r'course', CourseViewSet)
 router.register(r'payments', PaymentViewSet)
+router.register(r'subscriber', SubscriptionViewSet)
 
 
 urlpatterns = [

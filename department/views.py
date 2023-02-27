@@ -2,9 +2,17 @@ from rest_framework import viewsets, generics
 
 from rest_framework.permissions import IsAuthenticated
 
-from department.models import Course, Lesson
+from department.models import Course, Lesson, UserSubscription
 from department.permissions import OwnerOrStuff, IsOwner, IsStaff, PermsForViewSetCourse, IsNotStaff
-from department.serializers import CourseSerializer, LessonSerializer
+from department.serializers import CourseSerializer, LessonSerializer, UserSubscriptionSerializer
+
+
+class SubscriptionViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSubscriptionSerializer
+    queryset = UserSubscription.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class CourseViewSet(viewsets.ModelViewSet):
