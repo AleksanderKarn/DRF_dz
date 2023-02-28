@@ -10,7 +10,9 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'name',
+            'preview',
             'link',
+            'course_id',
             'owner',
         )
         validators = [LessonAndCourseValidatr(field='link')]
