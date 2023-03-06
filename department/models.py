@@ -10,7 +10,8 @@ class Course(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название курса')
     preview = models.ImageField(verbose_name='Картинка', **NULLABLE)
     description = models.TextField(verbose_name='Описание')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,null=True)
+    price = models.IntegerField(default=1000)
 
     def __str__(self):
         return f'Название курса - {self.name}'
@@ -49,3 +50,21 @@ class UserSubscription(models.Model):
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+
+
+class Payment(models.Model):
+    RUN = "run"
+    REJECT = 'reject'
+    EXECUTED = 'executed'
+    STATUS_PAYMENT = (
+        ('reject', 'отклонен'),
+        ('run', 'в обработке'),
+        ('executed', 'исполнен')
+    )
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, related_name='payment_course',
+                               verbose_name='Подписка на курс', null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='payment_owner', on_delete=models.SET_NULL,
+                              null=True)
+    payment_url = models.CharField(max_length=250, verbose_name='Описание заказа')
+
+    status_payment = models.CharField(choices=STATUS_PAYMENT, max_length=10, default=RUN, verbose_name='Статус платежа')

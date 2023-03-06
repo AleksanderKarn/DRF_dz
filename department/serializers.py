@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from department.models import Course, Lesson, UserSubscription
+from department.models import Course, Lesson, UserSubscription, Payment
 from department.validators import LessonAndCourseValidatr
 
 
@@ -13,7 +13,7 @@ class LessonSerializer(serializers.ModelSerializer):
             'preview',
             'link',
             'course_id',
-            'owner',
+
         )
         validators = [LessonAndCourseValidatr(field='link')]
 
@@ -35,7 +35,6 @@ class CourseSerializer(serializers.ModelSerializer):
             'pk',
             'name',
             'description',
-            'owner',
             'count_lesson',
             'lessons',
             'subscription',
@@ -51,3 +50,9 @@ class CourseSerializer(serializers.ModelSerializer):
         if subscription:
             return f'Подписка оформлена'
         return 'Подписка отсутствует'
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'

@@ -1,14 +1,13 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from payments.models import Payment
-from payments.serializers import PaymentSerializer
+from department.models import Payment
 from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     count_payments = serializers.SerializerMethodField()
-    list_payments = PaymentSerializer(source='payment_set', many=True)
+    #list_payments = PaymentSerializer(source='payment_set', many=True)
 
     class Meta:
         model = User
@@ -18,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             'country',
             'first_name',
             'last_name',
-            'list_payments',
+            #'list_payments',
             'count_payments',
         )
 
@@ -28,3 +27,4 @@ class UserSerializer(serializers.ModelSerializer):
     def get_count_payments(self, instance):
         count_payments = Payment.objects.filter(user_id=instance).count()
         return count_payments
+#
