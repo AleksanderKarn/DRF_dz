@@ -166,6 +166,7 @@ SIMPLE_JWT = {
 }
 
 TERMINAL_KEY = os.getenv('TERMINAL_KEY')
+PASSWORD_TERMINAL = os.getenv('PASSWORD_TERMINAL')
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 

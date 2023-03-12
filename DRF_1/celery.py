@@ -22,6 +22,10 @@ app.conf.beat_schedule = {
         "task": "department.tasks.pay_check",
         "schedule": crontab(minute='*/1'),
     },
+    "status_check_30_sec": {
+        "task": "department.tasks.status_check",
+        "schedule": crontab(minute='*/1')
+    },
 }
 
 # @app.task(bind=True)

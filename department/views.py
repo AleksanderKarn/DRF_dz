@@ -1,5 +1,5 @@
 import json
-
+import hashlib
 import requests
 from django.conf import settings
 
@@ -138,6 +138,22 @@ class PaymentsCreateAPIView(generics.CreateAPIView):
             }
         }
 
+        param_dict = {
+            "Amount": deta_for_request["Amount"],
+            "Description": deta_for_request["Description"],
+            "TerminalKey": settings.TERMINAL_KEY,
+            "OrderId": deta_for_request["OrderId"],
+            "Password": settings.PASSWORD_TERMINAL,
+        }
+        sorted_param_dict = dict(sorted(param_dict.items()))
+        res = ""
+        for key in sorted_param_dict.keys():
+            res += str(sorted_param_dict[key])
+        encoded = res.encode('UTF-8')
+        result = hashlib.sha256(encoded)
+        hach_res = result.hexdigest()
+        print(res)
+        print(hach_res)
         response = requests.post(
             url='https://securepay.tinkoff.ru/v2/Init',
             data=json.dumps(deta_for_request),
@@ -146,6 +162,10 @@ class PaymentsCreateAPIView(generics.CreateAPIView):
 
         payment_url = response.json()["PaymentURL"]
         payment.payment_url = payment_url
+        payment_id = response.json()["PaymentId"]
+        payment.payment_id = payment_id
+        payment.terminal_key = settings.TERMINAL_KEY
+        payment.token = hach_res
         payment.save()
         return Response(
             {

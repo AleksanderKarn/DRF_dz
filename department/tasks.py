@@ -1,7 +1,9 @@
+import json
+
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
-
+import requests
 from DRF_1.celery import app
 from department.models import UserSubscription, Course, Payment
 from user.models import User
@@ -50,9 +52,35 @@ def pay_check():
         for course in payment_list:
             course_pk = course.course_id
             send_mailing(course_pk, message=MESSAGE["status_payment"])
-            for payment in payment_list:
-                payment.status_payment = "processed"
+        for payment in payment_list:
+            payment.status_payment = "processed"
+            payment.save()
+
+@app.task
+def status_check():
+    filter_cond = {"status_payment": "run"}
+    payment_list = Payment.objects.filter(**filter_cond)
+    if payment_list.exists():
+        for payment in payment_list:
+
+            deta_for_request = {
+                "TerminalKey": settings.TERMINAL_KEY,
+                "PaymentId": payment.payment_id,
+                "Token": payment.token
+            }
+            response = requests.post(
+                url='https://securepay.tinkoff.ru/v2/GetState',
+                data=json.dumps(deta_for_request),
+                headers={'Content-type': 'application/json'}
+            )
+            success_pay = response.json()["Success"]
+            if success_pay == True:
+                payment.status_payment = "executed"
                 payment.save()
+            elif success_pay == False:
+                payment.status_payment = "reject"
+                payment.save()
+
 
 # команды для запуска CELERY и BEET
 
