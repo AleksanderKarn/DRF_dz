@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from department.models import Course, Lesson, UserSubscription, Payment
 from department.permissions import OwnerOrStuff, IsOwner, IsStaff, PermsForViewSetCourse, IsNotStaff
 from department.serializers import CourseSerializer, LessonSerializer, UserSubscriptionSerializer, PaymentSerializer
+from department.tasks import course_check
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -36,7 +37,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         return queryset.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        self.object = serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        self.object = serializer.save(owner=self.request.user)
+        course_pk = self.object.pk
+        course_check.delay(course_pk)
 
     ##### CRUD для модели Lesson при помощи generics
 
@@ -95,18 +101,17 @@ class PaymentsCreateAPIView(generics.CreateAPIView):
         )
 
         if not created:
-            if payment.status_payment =='run':
+            if payment.status_payment == 'run':
                 return Response(
-                {
-                    "Статус курса": 'Платеж находится в обработке'
-                }
+                    {
+                        "Статус курса": 'Платеж находится в обработке'
+                    }
                 )
             return Response(
                 {
                     "Статус курса": f'Курс {course_item.name} Уже оплачен'
                 }
             )
-
 
         deta_for_request = {
             "TerminalKey": settings.TERMINAL_KEY,

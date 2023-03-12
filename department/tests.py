@@ -54,7 +54,7 @@ class LessonTestCase(APITestCase):
                 'preview': None,
                 "link": "https://www.youtube.com/watch?v",
                 'course_id': None,
-                'owner': 1,
+                # 'owner': 1,
             }
         )
 
@@ -78,16 +78,16 @@ class LessonTestCase(APITestCase):
                 'preview': None,
                 "link": "https://www.youtube.com/watch?",
                 'course_id': None,
-                'owner': 1,
+                # 'owner': 1,
             }
         )
 
     def test_lesson_delete(self):
         self.test_lesson_create()
         response = self.client.delete(
-            f'/department/lesson/delete/1/',
-            {"name": "ABC", "link": "https://www.youtube.com/watch?v"}
+            f'/department/lesson/delete/1/'
         )
+
         self.assertEqual(
             response.status_code,
             status.HTTP_204_NO_CONTENT
@@ -116,6 +116,7 @@ class LessonTestCase(APITestCase):
             response.status_code,
             status.HTTP_201_CREATED
         )
+
     def test_subscription_update(self):
         self.test_subscription_create()
         response = self.client.put(
@@ -147,7 +148,7 @@ class LessonTestCase(APITestCase):
                 "pk": 1,
                 "name": "ABC",
                 'description': "description",
-                "owner": 1,
+                # "owner": 1,
                 "count_lesson": 0,
                 "lessons": [],
                 "subscription": "Подписка отсутствует"
@@ -165,11 +166,9 @@ class LessonTestCase(APITestCase):
                 "pk": 1,
                 "name": "ABC",
                 'description': "description",
-                "owner": 1,
+                # "owner": 1,
                 "count_lesson": 0,
                 "lessons": [],
                 "subscription": "Подписка оформлена"
             }
         )
-
-

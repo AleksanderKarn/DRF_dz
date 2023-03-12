@@ -10,11 +10,11 @@ class Course(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название курса')
     preview = models.ImageField(verbose_name='Картинка', **NULLABLE)
     description = models.TextField(verbose_name='Описание')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     price = models.IntegerField(default=1000)
 
     def __str__(self):
-        return f'Название курса - {self.name}'
+        return f'Курс - {self.name}'
 
     class Meta:
         verbose_name = 'Курс'
@@ -56,10 +56,12 @@ class Payment(models.Model):
     RUN = "run"
     REJECT = 'reject'
     EXECUTED = 'executed'
+    PROCESSED = 'processed'  # Статус после отправленного письма о том что платеж выполнен
     STATUS_PAYMENT = (
         ('reject', 'отклонен'),
         ('run', 'в обработке'),
-        ('executed', 'исполнен')
+        ('executed', 'выполнен'),
+        ('processed', 'обработан')
     )
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, related_name='payment_course',
                                verbose_name='Подписка на курс', null=True)
