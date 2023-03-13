@@ -53,15 +53,18 @@ class UserSubscription(models.Model):
 
 
 class Payment(models.Model):
-    RUN = "run"
-    REJECT = 'reject'
+    STARTED = 'started'
     EXECUTED = 'executed'
-    PROCESSED = 'processed'  # Статус после отправленного письма о том что платеж выполнен
+    ENDED = 'ended'
+    PROCESSED = 'processed'# Статус после отправленного письма о том что платеж выполнен
+    REJECT = 'reject'
     STATUS_PAYMENT = (
+        ('started', 'создан'),
+        ('executed', 'в обработке'),
+        ('ended', 'выполнен'),
+        ('processed', 'уведомление отправлено'),
         ('reject', 'отклонен'),
-        ('run', 'в обработке'),
-        ('executed', 'выполнен'),
-        ('processed', 'обработан')
+
     )
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, related_name='payment_course',
                                verbose_name='Подписка на курс', null=True)
@@ -69,7 +72,7 @@ class Payment(models.Model):
                               null=True)
     payment_url = models.CharField(max_length=250, verbose_name='Описание заказа')
 
-    status_payment = models.CharField(choices=STATUS_PAYMENT, max_length=10, default=RUN, verbose_name='Статус платежа')
+    status_payment = models.CharField(choices=STATUS_PAYMENT, max_length=10, default=STARTED, verbose_name='Статус платежа')
 
     terminal_key = models.CharField(max_length=50, verbose_name='TerminalKey', **NULLABLE)
     payment_id = models.CharField(max_length=20, verbose_name='PaymentId', **NULLABLE)

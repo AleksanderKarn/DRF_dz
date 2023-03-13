@@ -18,14 +18,16 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    "pay_check_1_minut": {
-        "task": "department.tasks.pay_check",
-        "schedule": crontab(minute='*/1'),
-    },
-    "status_check_30_sec": {
-        "task": "department.tasks.status_check",
+    "status_check_1_minut": {
+        "task": "department.tasks.check_status_pay",
         "schedule": crontab(minute='*/1')
     },
+
+    "pay_check_and_send_mail_1_minut": {
+        "task": "department.tasks.send_mail_for_ended_pay",
+        "schedule": crontab(minute='*/1'),
+    },
+
 }
 
 # @app.task(bind=True)
