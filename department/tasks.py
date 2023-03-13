@@ -95,6 +95,13 @@ def check_status_pay():
                 payment.status_payment = "reject"
             payment.save()
 
+@app.task
+def check_status_pay_reject():
+    filter_cond = {"status_payment": "reject"}
+    payment_list = Payment.objects.filter(**filter_cond)
+    if payment_list.exists():
+        for payment in payment_list:
+            payment.delete()
 # команды для запуска CELERY и BEET
 
 # celery -A DRF_1 worker -l INFO -P eventlet

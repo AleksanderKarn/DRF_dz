@@ -27,7 +27,10 @@ app.conf.beat_schedule = {
         "task": "department.tasks.send_mail_for_ended_pay",
         "schedule": crontab(minute='*/1'),
     },
-
+    "check_pay_status_reject": {
+        "task": "department.tasks.check_status_pay_reject",
+        "schedule": crontab(minute='*/1'),
+    },
 }
 
 # @app.task(bind=True)
